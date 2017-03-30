@@ -1,16 +1,16 @@
 /*
-* SpiMasterAr.cpp
+* SpiMaster.cpp
 *
 * Created: 02/14/2017 21:40:41 PM
 * Author: nm
 */
 
 
-#include "SpiMasterAr.h"
+#include "SpiMaster.h"
 #include "..\dustyWiFoxHw.h"
 
 // default constructor
-SpiMasterAr::SpiMasterAr()
+SpiMaster::SpiMaster()
 {
 	// start the SPI library:
 	SPI.begin();
@@ -18,18 +18,18 @@ SpiMasterAr::SpiMasterAr()
 } //SpiMaster
 
 // default destructor
-SpiMasterAr::~SpiMasterAr()
+SpiMaster::~SpiMaster()
 {
 } //~SpiMaster
 
-void SpiMasterAr::slaveInit(uint8_t slavePin)
+void SpiMaster::slaveInit(uint8_t slavePin)
 {
 	this->ssPin=slavePin;
 	
 	pinMode(slavePin, OUTPUT);
 }
 
-void SpiMasterAr::write(const uint8_t *pData, uint16_t len)
+void SpiMaster::write(const uint8_t *pData, uint16_t len)
 {
 	unsigned char* data = pData;
 	
@@ -53,7 +53,7 @@ void SpiMasterAr::write(const uint8_t *pData, uint16_t len)
 }
 
 
-const uint8_t* SpiMasterAr::read(uint8_t *pReadData, uint16_t wLen, uint16_t rLen, uint8_t dummyTx)
+const uint8_t* SpiMaster::read(uint8_t *pReadData, uint16_t wLen, uint16_t rLen, uint8_t dummyTx)
 {
 	volatile unsigned char *data = pReadData;
 	

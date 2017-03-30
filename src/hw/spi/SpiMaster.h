@@ -6,13 +6,13 @@
 */
 
 
-#ifndef __SPIMASTER_AR_H__
-#define __SPIMASTER_AR_H__
+#ifndef __SPIMASTER_H__
+#define __SPIMASTER_H__
 
 #include <stdint-gcc.h>
 #include <SPI.h>
 
-class SpiMasterAr
+class SpiMaster
 {
 //variables
 public:
@@ -21,18 +21,18 @@ private:
 
 //functions
 public:
-	SpiMasterAr();
-	~SpiMasterAr();
+	SpiMaster();
+	~SpiMaster();
 	void slaveInit(uint8_t slavePin);
 	void write(const uint8_t *data, uint16_t len);
 	const uint8_t* read(uint8_t *data, uint16_t wLen, uint16_t rLen, uint8_t dummyTx=1);
 	
 protected:
 private:
-	SpiMasterAr( const SpiMasterAr &c );
-	SpiMasterAr& operator=( const SpiMasterAr &c );
+	SpiMaster( const SpiMaster &c );
+	SpiMaster& operator=( const SpiMaster &c );
 	uint8_t ssPin;
 
 }; //SpiMaster
 
-#endif //__SPIMASTER_AR_H__
+#endif //__SPIMASTER_H__

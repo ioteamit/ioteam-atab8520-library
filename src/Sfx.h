@@ -10,10 +10,13 @@
 #define __SFX_H__
 
 #include <stdint-gcc.h>
-#include "..\hw\spi\SpiMaster.h"
-#include "SigFox\ATAB8520.h"
+#include "hw\spi\SpiMaster.h"
+#include "ATAB8520.h"
 //#include "IotModule\IotModule.h"
 
+//NINO
+#define PORT_PIN_PULL_NONE 0
+#define delay_ms(X) delay(X)
 
 struct supplyTemp
 {

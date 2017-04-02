@@ -6,9 +6,9 @@
 */
 
 
-#include "..\Sfx.h"
-#include "..\hw\gpio\Gpio.h"
-#include "..\delay\delay.h"
+#include "..\..\Sfx.h"
+//#include "..\hw\gpio\Gpio.h"
+//#include <delay.h>
 //#include "ATAB8520.h"
 
 
@@ -23,7 +23,7 @@ Sfx::Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin)
 	
 	pinMode(resetPin, OUTPUT);
 	pinMode(pwronPin, OUTPUT);
-	pinMode(eventPin, INPUT, PORT_PIN_PULL_NONE);
+	pinMode(eventPin, INPUT);
 	delay_ms(1000); //delay_us(50); really not need
 
 

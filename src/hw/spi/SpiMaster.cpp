@@ -7,7 +7,7 @@
 
 
 #include "SpiMaster.h"
-#include "..\dustyWiFoxHw.h"
+//#include "..\dustyWiFoxHw.h"
 
 // default constructor
 SpiMaster::SpiMaster()

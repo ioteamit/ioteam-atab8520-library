@@ -6,11 +6,7 @@
 */
 
 
-#include "..\..\Sfx.h"
-//#include "..\hw\gpio\Gpio.h"
-//#include <delay.h>
-//#include "ATAB8520.h"
-
+#include "../../Sfx.h"
 
 
 // default constructor
@@ -20,17 +16,20 @@ Sfx::Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin)
 	this->resetPin	= resetPin;
 	this->pwronPin	= pwronPin;
 	this->eventPin	= eventPin;
+	memset(this->deviceStatus, 0, 4);
 	
+	comunication.slaveInit(ssPin);
 	pinMode(resetPin, OUTPUT);
 	pinMode(pwronPin, OUTPUT);
-	pinMode(eventPin, INPUT);
-	delay_ms(1000); //delay_us(50); really not need
+        pinMode(eventPin, INPUT_PULLUP);
+	//pinMode(eventPin, INPUT);
+	delay(1); //delay_us(50); really not need
 
 
 	/* reset cycle
 	* as per Figure 2-2. Power-up Sequence
 	* http://www.atmel.com/Images/Atmel-9372-Smart-RF-ATA8520_Datasheet.pdf
-	*/
+        *
 	// move in OFF Mode
 	digitalWrite(pwronPin, LOW);
 	digitalWrite(resetPin, LOW);
@@ -40,8 +39,18 @@ Sfx::Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin)
 	delay_ms(2000); //delay_ms(20)
 	// everything is ready remove reset
 	digitalWrite(resetPin, HIGH);
+        */
 	
-	comunication.slaveInit(ssPin);
+	digitalWrite(resetPin, HIGH);
+	digitalWrite(pwronPin, LOW);
+	delay(10); 
+	digitalWrite(resetPin, LOW);
+	delay(10); 
+	digitalWrite(pwronPin, HIGH);
+	delay(10); 
+	digitalWrite(resetPin, HIGH);
+	delay(100); 
+	
 } //Sfx
 
 
@@ -81,9 +90,9 @@ void Sfx::startHomologation(uint8_t freq[])
 	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
 	
 	// than set the CW Mode
-	setRegister(SEND_CW);
-	setDataToWrite(freq, sizeof(freq));
-	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
+	//setRegister(SEND_CW);
+	//setDataToWrite(freq, sizeof(freq));
+	//comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
 }
 
 uint8_t Sfx::sleepModule(bool sleep)
@@ -194,7 +203,7 @@ const uint8_t* Sfx:: getSigfoxVersion(void){
 void Sfx::readDeviceStatus(void)
 {
 	setRegister(DEVICE_STATUS);
-	this->deviceStatus = comunication.read(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen, DEVICE_STATUS_RET_LEN);
+	memcpy(this->deviceStatus, comunication.read(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen, DEVICE_STATUS_RET_LEN),4);
 }
 
 bool Sfx::isSystemReady(void)
@@ -202,7 +211,7 @@ bool Sfx::isSystemReady(void)
 	if(((this->deviceStatus[1] >> 6) & 1) == 1)
 	{
 		return true;
-		} else {
+	} else {
 		return false;
 	}
 }
@@ -298,13 +307,23 @@ void Sfx::sendFrame(void)
 }
 
 unsigned long Sfx::sendMessage(uint8_t* message, int len) {
-	if(!waitUntilSystemIsReady(10000)) {
-		return false;
-	}
+	//if(!waitUntilSystemIsReady(15000)) {
+        //Serial.println("Failing");
+//		return 0xFFFF;
+//	}
 	
 	writeTX(message, len);
 	sendFrame();
+
+	if(!waitUntilEvent(60000)) {
+		return 79;
+	}
+//	if(!waitUntilSystemIsReady(15000)) {
+ //       Serial.println("Failing");
+//		return 0xFFFF;
+//	}
 	
+
 	readDeviceStatus();
 	atmel_error ae=getAtmelStatus();
 	sigfox_error se=getSigFoxStatus();
@@ -613,7 +632,7 @@ bool Sfx::waitUntilEvent(unsigned long timeout) //timeout in milliseconds
 {
 	uint8_t eventValue=1; //Line event is on when its value is 0
 	unsigned long counter=0;
-	
+
 	while(eventValue==1 && counter*100<timeout) {  //timeout check
 		//readDeviceStatus();
 		eventValue=getEventPin();
@@ -622,8 +641,21 @@ bool Sfx::waitUntilEvent(unsigned long timeout) //timeout in milliseconds
 	}
 	
 	if(eventValue==0) {
+		readDeviceStatus();
+	        bool ready=isSystemReady();
+                Serial.print("Event arrived ready status: ");
+                Serial.print(ready);
+                Serial.print(" ");
+	        Serial.print(this->deviceStatus[0], HEX);
+                Serial.print(" ");
+	        Serial.print(this->deviceStatus[1], HEX);
+                Serial.print(" ");
+	        Serial.println(this->deviceStatus[2], HEX);
+                Serial.print(" ");
+	        Serial.println(this->deviceStatus[3], HEX);
+
 		return true;
-		} else {
+	} else {
 		return false;
 	}
 }

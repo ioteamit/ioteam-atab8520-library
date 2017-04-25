@@ -134,7 +134,8 @@ Note: 1. These commands are available in device with Atmel Version V ? 1.0
 typedef union {
 	uint8_t address;
 	uint8_t payloadTxRx[MAX_ANSWER+1]; // consider the Address
-	}sfxMsgU;
+}sfxMsgU;
+
 typedef struct  {
 	sfxMsgU msg;
 	uint8_t msgLen;

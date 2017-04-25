@@ -26,6 +26,7 @@ public:
 	void slaveInit(uint8_t slavePin);
 	void write(const uint8_t *data, uint16_t len);
 	const uint8_t* read(uint8_t *data, uint16_t wLen, uint16_t rLen, uint8_t dummyTx=1);
+        uint8_t* readSPI(uint8_t reg, uint8_t *pReadData, uint16_t wLen, uint16_t rLen, uint8_t dummyTx=1);
 	
 protected:
 private:

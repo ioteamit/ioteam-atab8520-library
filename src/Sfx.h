@@ -10,9 +10,8 @@
 #define __SFX_H__
 
 #include <stdint-gcc.h>
-#include "hw\spi\SpiMaster.h"
-#include "ATAB8520.h"
-//#include "IotModule\IotModule.h"
+#include "hw/spi/SpiMaster.h"
+#include "iot/SigFox/ATAB8520.h"
 
 //NINO
 #define PORT_PIN_PULL_NONE 0
@@ -46,12 +45,12 @@ private:
 	uint8_t   eventPin;
 	uint8_t   portCPin;
 	uint8_t   portCValue;
-	const uint8_t*  deviceStatus;
 	sfxMsgS   sfxMsg;
 
 void setDataToWrite(const uint8_t *buffer, uint8_t bufferLen);
 //functions
 public:
+	uint8_t   deviceStatus[4];
 	Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin);
 	~Sfx();
 	void powerOn(bool power);

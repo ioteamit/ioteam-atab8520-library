@@ -9,6 +9,7 @@
 #ifndef __SFX_H__
 #define __SFX_H__
 
+#include <Arduino.h>
 #include <stdint-gcc.h>
 #include "hw/spi/SpiMaster.h"
 #include "iot/SigFox/ATAB8520.h"
@@ -51,9 +52,13 @@ void setDataToWrite(const uint8_t *buffer, uint8_t bufferLen);
 //functions
 public:
 	uint8_t   deviceStatus[4];
+	Sfx(){};
 	Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin);
 	~Sfx();
-	void powerOn(bool power);
+        void begin();
+        void setEUFreq();
+	void setUSFreq();
+        void powerOn(bool power);
 	uint8_t getEventPin();
 	void systemReset(void);
 	bool setPortCIOMode(uint8_t pin, uint8_t mode);
@@ -104,11 +109,12 @@ public:
 
 protected:
 private:
-	Sfx(){};
 	Sfx( const Sfx &c );
 	Sfx& operator=( const Sfx &c );
 	void setRegister(uint8_t reg);
 
 }; //Sfx
+
+extern Sfx SigFoxObj;
 
 #endif //__SFX_H__

@@ -8,23 +8,26 @@
 
 #include "../../Sfx.h"
 
+uint8_t freqTx[]={0x33, 0xBE, 0x9C, 0xD0};
+uint8_t freqRx[]={0x33, 0xD3, 0xE6, 0x08};
+
+uint8_t freqUSTx[]={0x35, 0xC6, 0x7A, 0xC0};
+uint8_t freqUSRx[]={0x35, 0xF4, 0x41, 0x80};
 
 // default constructor
 Sfx::Sfx(uint8_t ssPin, uint8_t resetPin, uint8_t pwronPin, uint8_t eventPin)
 {
-	this->ssPin		= ssPin;
+	this->ssPin	= ssPin;
 	this->resetPin	= resetPin;
 	this->pwronPin	= pwronPin;
 	this->eventPin	= eventPin;
 	memset(this->deviceStatus, 0, 4);
 	
-	comunication.slaveInit(ssPin);
 	pinMode(resetPin, OUTPUT);
 	pinMode(pwronPin, OUTPUT);
-        pinMode(eventPin, INPUT_PULLUP);
+        pinMode(eventPin, INPUT_PULLUP);        
 	//pinMode(eventPin, INPUT);
 	delay(1); //delay_us(50); really not need
-
 
 	/* reset cycle
 	* as per Figure 2-2. Power-up Sequence
@@ -59,10 +62,6 @@ Sfx::~Sfx()
 {
 } //~Sfx
 
-uint8_t freqTx[]={0x33, 0xBE, 0x9C, 0xD0};
-uint8_t freqRx[]={0x33, 0xD3, 0xE6, 0x08};
-uint8_t atmelVer[]={0x06, 0x00, 0x00, 0x00};
-uint8_t data3[]={0x0A, 0x00, 0x00, 0x00, 0x00};
 
 void Sfx::powerOn(bool power)
 {
@@ -71,6 +70,15 @@ void Sfx::powerOn(bool power)
 	} else {
 		digitalWrite(pwronPin, LOW);		
 	}
+}
+
+void Sfx::begin()
+{
+  storeSystemConfig(0, 0, 3, true, false, true);
+  comunication.slaveInit(ssPin);
+  delay(1000);
+
+  systemReset();
 }
 
 uint8_t Sfx::getEventPin()
@@ -93,6 +101,28 @@ void Sfx::startHomologation(uint8_t freq[])
 	//setRegister(SEND_CW);
 	//setDataToWrite(freq, sizeof(freq));
 	//comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
+}
+
+void Sfx::setEUFreq()
+{	
+	setRegister(SET_TX_FREQ);
+	setDataToWrite(freqTx, sizeof(freqTx));
+	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
+	
+	setRegister(SET_RX_FREQ);
+	setDataToWrite(freqRx, sizeof(freqRx));
+	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
+}
+
+void Sfx::setUSFreq()
+{	
+	setRegister(SET_TX_FREQ);
+	setDataToWrite(freqUSTx, sizeof(freqUSTx));
+	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
+	
+	setRegister(SET_RX_FREQ);
+	setDataToWrite(freqUSRx, sizeof(freqUSRx));
+	comunication.write(sfxMsg.msg.payloadTxRx, sfxMsg.msgLen);
 }
 
 uint8_t Sfx::sleepModule(bool sleep)
@@ -318,13 +348,7 @@ unsigned long Sfx::sendMessage(uint8_t* message, int len) {
 	if(!waitUntilEvent(60000)) {
 		return 79;
 	}
-//	if(!waitUntilSystemIsReady(15000)) {
- //       Serial.println("Failing");
-//		return 0xFFFF;
-//	}
-	
 
-	readDeviceStatus();
 	atmel_error ae=getAtmelStatus();
 	sigfox_error se=getSigFoxStatus();
 	sigfox2_error se2=getSigFox2Status();
@@ -332,7 +356,7 @@ unsigned long Sfx::sendMessage(uint8_t* message, int len) {
 	if(ae==0 && se==0 && se2==0) {
 		return 0;
 	} else {
-		return (ae || se*16 || se2*16*256);
+		return (ae | se*16 | se2*16*256);
 	}
 }
 
@@ -350,9 +374,13 @@ const uint8_t* Sfx::readTX(void)
 
 unsigned long Sfx::sendReceiveMessage(uint8_t* message, int len, const uint8_t* received)
 {	
-	if(!waitUntilSystemIsReady(10000)) {
+/*
+	if(!waitUntilSystemIsReady(60000)) {
 		return 98;
 	}
+*/
+
+        readDeviceStatus();
 	
 	writeTX(message, len);
 	sendReceiveFrame();
@@ -360,17 +388,17 @@ unsigned long Sfx::sendReceiveMessage(uint8_t* message, int len, const uint8_t* 
 	if(!waitUntilEvent(60000)) {
 		return 99;
 	}
-	
-	received=readTX();
-
+	       
+        memcpy((void*)received, readTX(), 8);
+        
 	atmel_error ae=getAtmelStatus();
 	sigfox_error se=getSigFoxStatus();
 	sigfox2_error se2=getSigFox2Status();
-	
+ 
 	if(ae==0 && se==0 && se2==0) {
 		return 0;
 	} else {
-		return (ae || se*16 || se2*16*256);
+		return (ae | se*16 | se2*16*256);
 	}
 }
 
@@ -687,3 +715,4 @@ void Sfx::setDataToWrite(const uint8_t *buffer, uint8_t bufferLen)
 	sfxMsg.msgLen += bufferLen;
 }
 
+Sfx SigFoxObj(SIGFOX_SS_PIN, SIGFOX_RES_PIN, SIGFOX_PWRON_PIN, SIGFOX_EVENT_PIN);

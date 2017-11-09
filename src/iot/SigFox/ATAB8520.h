@@ -2,13 +2,13 @@
  * ATAB8520.h
  *
  * Created: 12/3/2016 4:18:17 PM
- *  Author: mfontane
+ *  Author: nm
  */ 
 
 
 #ifndef ATAB8520_H_
 #define ATAB8520_H_
-
+#include "stdint.h"
 /*
 CMD					Index	    Write Data			  Read Data
 System reset		0x01	None						None

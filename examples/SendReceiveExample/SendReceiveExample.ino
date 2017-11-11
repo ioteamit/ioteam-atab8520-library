@@ -1,4 +1,19 @@
-#include <ATAB8520.h>
+/*
+    SmarteEveryting Fox ATAB8520 Library - SendReceiveExample
+
+    This example shows how to send and receive a message using the Atmel ATAB8520 module
+
+    created 25 Feb 2017
+    by IoTeam (sw@ioteam.it)
+
+    This example is in the public domain
+    https://github.com/ioteamit/ioteam-atab8520-library
+
+    More information on ATAB8520 available here:
+    http://www.atmel.com/tools/ata8520-ek2-e.aspx
+
+ */
+
 #include <Sfx.h>
 
 #define SFX_SS_PIN 45

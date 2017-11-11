@@ -1,6 +1,74 @@
-atab8520       KEYWORD1
-begin   KEYWORD2
-write   KEYWORD2
-read    KEYWORD2
-update  KEYWORD2
-length  KEYWORD2
+#######################################
+# Syntax Coloring Map for atab8520
+#######################################
+
+#######################################
+# Library (KEYWORD3)
+#######################################
+SigFix         KEYWORD3
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+supplyTemp KEYWORD1
+sysConf KEYWORD1
+atmel_error KEYWORD1
+sigfox_error KEYWORD1
+sigfox2_error KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setDataToWrite KEYWORD2
+Sfx KEYWORD2
+begin KEYWORD2
+setEUFreq KEYWORD2
+setUSFreq KEYWORD2
+powerOn KEYWORD2
+getEventPin KEYWORD2
+systemReset KEYWORD2
+setPortCIOMode KEYWORD2
+portCWrite KEYWORD2
+portCRead KEYWORD2
+startHomologation KEYWORD2
+getVersion KEYWORD2
+writeTX KEYWORD2
+enableSpecialMode KEYWORD2
+getSigfoxVersion KEYWORD2
+readDeviceStatus KEYWORD2
+isSystemReady KEYWORD2
+isFrameReady KEYWORD2
+isPAIndicationOn KEYWORD2
+getAtmelStatus KEYWORD2
+getSigFoxStatus KEYWORD2
+getSigFox2Status KEYWORD2
+sendSingleBit KEYWORD2
+sendOutOfBand KEYWORD2
+sendFrame KEYWORD2
+sendMessage KEYWORD2
+sendReceiveFrame KEYWORD2
+getPac KEYWORD2
+readTX KEYWORD2
+sendReceiveMessage KEYWORD2
+storeSystemConfig KEYWORD2
+getID KEYWORD2
+readSupplyTemp KEYWORD2
+measureSupplyTemp KEYWORD2
+testMode KEYWORD2
+sendCW KEYWORD2
+firmwareTest KEYWORD2
+storeFrequencies KEYWORD2
+setTXFreq KEYWORD2
+setRXFreq KEYWORD2
+storeCrystalCoeff KEYWORD2
+getCrystalCoeff KEYWORD2
+getSystemConf KEYWORD2
+getFCCData KEYWORD2
+enableFixedFreq KEYWORD2
+storeChannelConf KEYWORD2
+resetChannelUsage KEYWORD2
+adjustRSSI KEYWORD2
+waitUntilSystemIsReady KEYWORD2
+waitUntilEvent KEYWORD2
+testPowerOnOff KEYWORD2
+sleepModule KEYWORD2
